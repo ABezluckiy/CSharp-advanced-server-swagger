@@ -1,7 +1,7 @@
 openapi: 3.0.4
 info:
   title: Todo C# 
-  version: 1.0.0
+  version: 1.0.1
 tags:
   - name: TodoController
 paths:
