@@ -10,7 +10,7 @@ tags:
   - name: News Controller
   - name: File Controller
 paths:
-  /v1/auth/login:
+  /v1/auth/signIn:
     post:
       tags:
         - Auth Controller
@@ -35,11 +35,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /v1/auth/register:
+  /v1/auth/signUp:
     post:
       tags:
         - Auth Controller
-      summary: Register
+      summary: Login
       operationId: getRegister
       requestBody:
         required: true

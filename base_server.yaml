@@ -1,0 +1,348 @@
+openapi: 3.0.4
+info:
+  title: Todo C# 
+  version: 1.0.0
+tags:
+  - name: TodoController
+paths:
+  /v1/todo:
+    get:
+      tags:
+        - TodoController
+      summary: Get paginated Tasks
+      operationId: getTasks
+      parameters:
+        - name: status
+          in: query
+          description: Опциональный параметр
+          required: false
+          explode: true
+          schema:
+            type: boolean
+        - name: offset
+          in: query
+          description: страница
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+        - name: limit
+          in: query
+          description: количество на странице
+          required: true
+          explode: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse<PaginatedTasks>' 
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    post:
+      tags:
+        - TodoController
+      summary: Создание новой задачи
+      description: Создание новой задачи
+      requestBody:
+        description: Модель новой задачи
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskDtoRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse<Task>'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      tags:
+        - TodoController
+      summary: Изменение статуса
+      description: Изменение статуса всех задач на статус из тела запроса
+      operationId: patchStatusByRequestBody
+      parameters:
+        - name: status
+          in: query
+          description: Additional Metadata
+          required: true
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              format: binary 
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+    delete:
+      tags:
+        - TodoController
+      summary: Удаление задач
+      description: Удаление всех готовых задач
+      operationId: deleteAllReadyTasks
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+  /v1/todo/{id}:
+    delete:
+      tags:
+        - TodoController
+      summary: Удаление задачи 
+      description: Удаление задачи по айди
+      operationId: deleteTaskById
+      parameters:
+        - name: id
+          in: path
+          explode: true
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse' 
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          
+  /v1/todo/status/{id}:
+    patch:
+      tags:
+        - TodoController
+      summary: Изменение задачи
+      description: Изменение статуса задачи по айди
+      operationId: patchStatusById
+      parameters:
+        - name: id
+          in: path
+          explode: true
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeTextDtoRequest' # TODO Исправить
+        required: true 
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse<Task>' 
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '404': 
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+  /v1/todo/text/{id}:
+    patch:
+      tags:
+        - TodoController
+      summary: Изменение задачи
+      description: Изменение теста задачи по айди
+      operationId: patchTextById
+      parameters:
+        - name: id
+          in: path
+          explode: true
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeTextDtoRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse<Task>' 
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse' 
+#MODELS
+components:
+  schemas:
+    Task:
+      required:
+        - id
+        - status
+        - text
+        - updatedAt
+        - createdAt
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        status:
+          type: boolean
+        text:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+    ChangeStatusDtoRequest:
+      required:
+        - status
+      type: object
+      properties:
+        status:
+          type: boolean
+    ChangeTextDtoRequest:
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          minLength: 3
+          maxLength: 160
+    CreateTaskDtoRequest:      
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          minLength: 3
+          maxLength: 160
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        data:
+          type: string
+    PaginatedTasks:
+      type: object
+      properties:
+        content: 
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        notReady:
+          type: integer
+          format: int32
+        numberOfElements:
+          type: integer
+          format: int32
+        ready:
+          type: integer
+          format: int32
+    ApiResponse<PaginatedTasks>:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        data:
+          $ref: '#/components/schemas/PaginatedTasks'
+    ApiResponse<Task>:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        data:
+          $ref: '#/components/schemas/Task'
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+  requestBodies:
+    TasksEntity:
+      description: Pet object that needs to be added to the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Task'
