@@ -1,7 +1,7 @@
 openapi: 3.0.4
 info:
   title: Todo C# 
-  version: 1.0.1
+  version: 1.0.2
 tags:
   - name: TodoController
 paths:
@@ -21,7 +21,7 @@ paths:
             type: boolean
         - name: offset
           in: query
-          description: страница
+          description: Страница
           required: true
           explode: true
           schema:
@@ -29,7 +29,7 @@ paths:
             format: int32
         - name: limit
           in: query
-          description: количество на странице
+          description: Количество задач на странице
           required: true
           explode: true
           schema:
@@ -48,12 +48,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse' 
-        '404':
-          description: Task not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse' 
     post:
       tags:
         - TodoController
@@ -64,11 +58,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateTaskDtoRequest'
+              $ref: '#/components/schemas/CreateTaskRequest'
         required: true
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description: Created task
           content:
             application/json:
               schema:
@@ -82,7 +76,7 @@ paths:
     patch:
       tags:
         - TodoController
-      summary: Изменение статуса
+      summary: Изменение статуса всех задач
       description: Изменение статуса всех задач на статус из тела запроса
       operationId: patchStatusByRequestBody
       parameters:
@@ -111,16 +105,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse' 
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse' 
     delete:
       tags:
         - TodoController
-      summary: Удаление задач
+      summary: Удаление готовых задач
       description: Удаление всех готовых задач
       operationId: deleteAllReadyTasks
       responses:
@@ -132,6 +120,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse' 
+                
   /v1/todo/{id}:
     delete:
       tags:
@@ -165,7 +154,7 @@ paths:
     patch:
       tags:
         - TodoController
-      summary: Изменение задачи
+      summary: Изменение статуса задачи
       description: Изменение статуса задачи по айди
       operationId: patchStatusById
       parameters:
@@ -180,7 +169,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChangeStatusDtoRequest'
+              $ref: '#/components/schemas/ChangeStatusRequest'
         required: true 
       responses:
         '200':
@@ -195,18 +184,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse' 
-        '404': 
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+                
   /v1/todo/text/{id}:
     patch:
       tags:
         - TodoController
-      summary: Изменение задачи
-      description: Изменение теста задачи по айди
+      summary: Изменениетекста задачи
+      description: Изменение текста задачи по айди
       operationId: patchTextById
       parameters:
         - name: id
@@ -220,7 +204,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChangeTextDtoRequest'
+              $ref: '#/components/schemas/ChangeTextRequest'
         required: true
       responses:
         '200':
@@ -235,12 +219,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse' 
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse' 
+
 #MODELS
 components:
   schemas:
@@ -266,14 +245,14 @@ components:
         createdAt:
           type: string
           format: date-time
-    ChangeStatusDtoRequest:
+    ChangeStatusRequest:
       required:
         - status
       type: object
       properties:
         status:
           type: boolean
-    ChangeTextDtoRequest:
+    ChangeTextRequest:
       required:
         - text
       properties:
@@ -281,7 +260,7 @@ components:
           type: string
           minLength: 3
           maxLength: 160
-    CreateTaskDtoRequest:      
+    CreateTaskRequest:      
       required:
         - text
       properties:
@@ -292,9 +271,8 @@ components:
     ApiResponse:
       type: object
       properties:
-        code:
-          type: integer
-          format: int32
+        message:
+          type: string
         data:
           type: string
     PaginatedTasks:
@@ -316,28 +294,23 @@ components:
     ApiResponse<PaginatedTasks>:
       type: object
       properties:
-        code:
-          type: integer
-          format: int32
+        message:
+          type: string
         data:
           $ref: '#/components/schemas/PaginatedTasks'
     ApiResponse<Task>:
       type: object
       properties:
-        code:
-          type: integer
-          format: int32
+        message:
+          type: string
         data:
           $ref: '#/components/schemas/Task'
     ErrorResponse:
       type: object
       properties:
-        code:
-          type: string
         message:
           type: string
       required:
-        - code
         - message
   requestBodies:
     TasksEntity:
