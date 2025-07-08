@@ -189,7 +189,7 @@ paths:
     patch:
       tags:
         - TodoController
-      summary: Изменениетекста задачи
+      summary: Изменение текста задачи
       description: Изменение текста задачи по айди
       operationId: patchTextById
       parameters:
