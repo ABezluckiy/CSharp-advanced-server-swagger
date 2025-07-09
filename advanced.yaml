@@ -739,13 +739,13 @@ components:
         message:
           type: string
     ApiResponse<int>:
-       type: object
-        properties:
-          message:
-            type: string
-          newsId:
-            type: integer
-            format: int32
+      type: object
+      properties:
+        message:
+          type: string
+        newsId:
+          type: integer
+          format: int32
     ErrorResponse:
       type: object
       properties:
