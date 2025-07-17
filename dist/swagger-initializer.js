@@ -4,8 +4,8 @@ window.onload = function() {
   // the following lines will be replaced by docker/configurator, when it runs in a docker-container
   window.ui = SwaggerUIBundle({
     urls: [
-      { url :"advanced.yaml", name : "Advanced server"},
-      { url : "base.yaml", name : "Base server"}
+      { url : "base.yaml", name : "Base server"},
+      { url :"advanced.yaml", name : "Advanced server"}
     ],
     dom_id: '#swagger-ui',
     deepLinking: true,
