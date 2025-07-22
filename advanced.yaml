@@ -39,7 +39,7 @@ paths:
     post:
       tags:
         - Auth Controller
-      summary: Login
+      summary: Registration
       operationId: getRegister
       requestBody:
         required: true
